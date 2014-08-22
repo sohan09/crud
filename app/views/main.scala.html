@@ -1,4 +1,4 @@
-@(title: String)(content: Html)
+@(title: String)(user_name: String = "")(content: Html)
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -26,7 +26,9 @@
   </head>
   
   <body data-target=".navbar" data-spy="scroll">
-
+  
+	@if(user_name != null && !user_name.equals("")) {
+	
 	<nav id="topnav" class="navbar navbar-default" role="navigation">
 	
 		<div class="container">
@@ -43,7 +45,7 @@
 				
 				</button>
 				
-				<a class="navbar-brand" href="#">VectX 1.0.</a>
+				<a class="navbar-brand" href="#">@user_name</a>
 				
 			</div>
 			
@@ -80,6 +82,8 @@
 	
 	</nav>
 	
+	}
+	
 	<div style="margin-top: 40px; min-height: 600px;">
 	
 		@content
@@ -99,9 +103,9 @@
 					
 						<p>
 						
-							© 2013 Built with 
+
 							
-							<a href="http://www.streamerss.com">www.streamerss.com</a>
+							<a href="http://www.streamerss.com"></a>
 						
 						</p>
 					

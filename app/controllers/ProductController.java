@@ -1,50 +1,172 @@
 package controllers;
 
-import java.util.Date;
+import java.util.*;
 
 import play.mvc.Controller;
 import play.mvc.Result;
+import play.data.Form;
+import play.data.DynamicForm;
+import play.db.ebean.Model.Finder;
 
-import models.Product;
+import com.avaje.ebean.Ebean;
+
+import models.*;
 
 public class ProductController extends Controller {
 
 	public static Result create() {
+	
+		Product prod = bindProduct();
+		
+		prod.setUserId(parseLong(session("user.id")));
+		
+		prod.setCreatedDate(new Date());
+		prod.setLastModifiedDate(prod.getCreatedDate());
+		
+		Ebean.save(prod);
+		
+		flash("msg", "The item has been created successfully.");
 
-		return redirect("/product/list");
+		return redirect("/product/list" + "?" + prod.getUserId() + "=" + session("user.id") + "&" + parseLong(session("user.id")));
 	}
 
 	public static Result delete(Long id) {
 	
+		Product prod = retrieveProduct(id);
 
+		Ebean.delete(prod);
+
+		flash("msg", "Product " + id + "deleted Successfully.");
+		
 		return redirect("/product/list");	
 	}
 	
-	public static Result update(Long id) {
+	public static Product retrieveProduct(long id) {
 	
+		Product prod = Ebean.find(Product.class)
+		.where()
+		.eq("id", id)
+		.eq("userId", parseLong(session("user.id")))
+		.findList()
+		.get(0);
+		
+		return prod;
+	}
+
+	private static Product bindProduct() {
+		Product prod = new Product();		
+		return bindProduct(prod);
+	}
+	
+	private static Product bindProduct(Product prod) {
+	
+		DynamicForm requestData = Form.form().bindFromRequest();
+		String name = requestData.get("name");
+		String description = requestData.get("description");
+		
+		prod.setName(name);
+		prod.setDescription(description);
+		return prod;
+	}
+	
+	public static Result update(Long id) {
+
+		Product prod = retrieveProduct(id);
+		
+		bindProduct(prod);
+		
+		prod.setLastModifiedDate(new Date());
+		
+		Ebean.update(prod);
+		
+		flash("msg", "Product " + id + "updated Successfully.");
 		
 		return redirect("/product/list");
 	}
 	
 	public static Result list() {
+
+		long page = requestLong("page");
+		long size = requestLong("size");
+		
+		size = Math.min(size, 50l);
+		size = size <= 0l ? 20l : size;
+		
+		long offset = ( page - 1l ) * size;
+			
+		List<Product> prods = Ebean.find(Product.class)
+			.where()
+			.eq("userId", parseLong(session("user.id")))
+			.setFirstRow((int) offset)
+			.setMaxRows((int) size)
+			.findList();
+			
+		String u_name = session("user.name");
 	
-		return ok(views.html.Product.list.render());
+		return ok(views.html.Product.list.render(prods, u_name));
+	}
+	
+	public static long requestLong(String key) {
+	
+		try {
+		
+			DynamicForm requestData = Form.form().bindFromRequest();
+			
+			long l = Long.parseLong(requestData.get(key));
+			
+		//	System.out.println("###[[parse : " + l + " => " + session("user.id"));
+			
+			return l;
+			
+		} catch(NullPointerException | NumberFormatException ex) {
+		
+			return 0;
+		}
+		
+	}
+	
+	public static long parseLong(String key) {
+	
+		try {
+		
+			DynamicForm requestData = Form.form().bindFromRequest();
+			
+			long l = Long.parseLong(key);
+			
+		//	System.out.println("###[[parse : " + l + " => " + session("user.id"));
+			
+			return l;
+			
+		} catch(NullPointerException | NumberFormatException ex) {
+		
+			return 0;
+		}
+		
 	}
 	
 	public static Result show(Long id) {
 	
-		return ok(views.html.Product.show.render(new Product( "Sohan", "Des", new Date(), new Date() )));
+		Product prod = retrieveProduct(id);
+		
+		String u_name = session("user.name");
+		
+		return ok(views.html.Product.show.render(prod, u_name));
 	}
 	
 	public static Result edit(Long id) {
-		Product prod = new Product( "Sohan", "Des", new Date(), new Date() );
-		prod.setId(4l);
-		return ok(views.html.Product.edit.render( prod, "TESTID__"));
+
+		Product prod = retrieveProduct(id);
+		
+		String u_name = session("user.name");
+		
+		return ok(views.html.Product.edit.render( prod, u_name));
 	}
 	
 	public static Result crt() {
 	
-		return ok(views.html.Product.create.render(new Product( "Sohan", "Des", new Date(), new Date() ), "TESTID__"));
+		String u_name = session("user.name");
+	
+		return ok(views.html.Product.create.render(u_name));
 	}
 	
 }

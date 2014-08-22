@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package models;
 
 import java.io.Serializable;
@@ -23,36 +22,46 @@ import play.data.validation.Constraints.Required;
  */
 @Entity
 public class Product implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-	
-	@Required
-	@Column(length = 256)
+
+    @Required
+    @Column(length = 256)
     private String name;
-	
-	@Column(length = 756)
+
+    @Column(length = 756)
     private String description;
 	
 	@Required
+	private Long userId;
+
+    @Required
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date createdDate;
-    
-	@Required
+
+    @Required
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date lastModifiedDate;
 
-	public Product() {}
-	
-	public Product(String name, String des, Date createdDate, Date lastModifiedDate) {
-	
-		this.name = name;
-		this.description = des;
-		this.createdDate = createdDate;
-		this.lastModifiedDate = lastModifiedDate;
-	}
-	
+    public Product() {
+    }
+
+    public Product(String name, String des) {
+        this.name = name;
+        this.description = des;
+    }
+
+    public Product(String name, String des, Date createdDate, Date lastModifiedDate) {
+
+        this.name = name;
+        this.description = des;
+        this.createdDate = createdDate;
+        this.lastModifiedDate = lastModifiedDate;
+    }
+
     public Long getId() {
         return id;
     }
@@ -77,6 +86,14 @@ public class Product implements Serializable {
         this.description = description;
     }
 
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+	
     public Date getCreatedDate() {
         return createdDate;
     }
@@ -92,7 +109,7 @@ public class Product implements Serializable {
     public void setLastModifiedDate(Date lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -117,5 +134,5 @@ public class Product implements Serializable {
     public String toString() {
         return "models.Product[ id=" + id + " ]";
     }
-    
+
 }

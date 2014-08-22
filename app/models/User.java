@@ -7,11 +7,14 @@ package models;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import play.data.validation.Constraints.Required;
 
@@ -28,15 +31,15 @@ public class User implements Serializable {
     private Long id;
 
     @Required
-	@Column(length = 50)
+    @Column(length = 50)
     private String firstName;
 
     @Required
-	@Column(length = 50)
+    @Column(length = 50)
     private String lastName;
 
     @Required
-	@Column(length = 100)
+    @Column(length = 100)
     private String email;
 
     @Required
@@ -47,22 +50,54 @@ public class User implements Serializable {
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date lastModifiedDate;
 
-	public User() {}
-	
-	public User(String firstName, String lastName, Date createdDate, Date lastModifiedDate) {
-	
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.createdDate = createdDate;
-		this.lastModifiedDate = lastModifiedDate;
-	}
-	
+    public User() {
+    }
+
+    public User(String firstName, String lastName, String email, Date createdDate, Date lastModifiedDate) {
+
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.createdDate = createdDate;
+        this.lastModifiedDate = lastModifiedDate;
+    }
+
+    public User(String firstName, String lastName, String email) {
+        this(firstName, lastName, email, null, null);
+    }
+
+    public User(String firstName, String lastName) {
+
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getFirstName() {
+
+        return firstName;
+    }
+
+    public String getLastName() {
+
+        return lastName;
+    }
+
+    public void setFirstName(String firstName) {
+
+        this.firstName = firstName;
+    }
+
+    public void setLastName(String lastName) {
+
+        this.lastName = lastName;
     }
 
     @Override

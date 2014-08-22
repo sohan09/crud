@@ -16,7 +16,7 @@ GET		/product/delete/:id		controllers.ProductController.delete(id: Long)
 POST	/product/create				controllers.ProductController.create()
 POST	/product/update/:id			controllers.ProductController.update(id: Long)
 
-POST 	/authenticate				controllers.Application.authenticate()
+GET 	/authenticate				controllers.Application.authenticate()
 
 # public assets js, css, img
 GET  /public/*file               controllers.Assets.at(path="/public", file)

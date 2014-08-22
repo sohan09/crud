@@ -1,5 +1,5 @@
-@(prod: Product, ttl: String)
-@main(title = ttl) {
+@(prod: Product)(u_name: String = "")
+@main(title = "Edit Product")(user_name = "Hi " + u_name) {
 
 	<section>
 

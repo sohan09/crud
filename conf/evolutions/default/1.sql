@@ -18,6 +18,7 @@ create table product (
   id                        bigint auto_increment not null,
   name                      varchar(256),
   description               varchar(756),
+  user_id                   bigint,
   created_date              datetime,
   last_modified_date        datetime,
   constraint pk_product primary key (id))

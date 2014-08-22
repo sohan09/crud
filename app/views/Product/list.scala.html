@@ -1,4 +1,5 @@
-@main(title = "Product") {
+@(list: List[Product])(u_name: String = "")
+@main(title = "Products")(user_name = "Hi " + u_name) {
 
 	<section>
 
@@ -16,13 +17,17 @@
 					
 					<tbody>
 					
+					@for(prod <- list) {
+					
 						<tr>
 						
-							<td>Mondo DB</td>
+							<td><a href="/product/show/@prod.getId()">@prod.getName()</a></td>
 							
-							<td>Extension Common Hacked</td>
+							<td>@prod.getDescription</td>
 						
 						</tr>
+					
+					}
 					
 					</tbody>
 				
