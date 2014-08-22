@@ -3,6 +3,7 @@ package models;
 import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Column;
 
 import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
@@ -13,6 +14,7 @@ import play.utils.dao.BasicModel;
 public class Simple extends Model implements BasicModel<Long> {
 
 	@Id
+	@Column(name="id")
 	private Long key;
 
 	@Basic

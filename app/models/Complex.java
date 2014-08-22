@@ -19,6 +19,7 @@ import play.utils.dao.BasicModel;
 public class Complex extends Model implements BasicModel<Long> {
 
 	@Id
+	@Column(name="id")
 	private Long key;
 
 	@Basic
