@@ -1,1 +1,1 @@
-web:    activator run --http.port=$PORT $PLAY_OPTS
+web: target/universal/stage/bin/xstore -Dhttp.port=$PORT

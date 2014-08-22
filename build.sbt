@@ -1,6 +1,6 @@
-name := """play2-crud-activator"""
+name := """xstore"""
 
-version := "0.7.3-SNAPSHOT"
+version := "1.0.0"
 
 libraryDependencies ++= Seq(
   javaCore, javaJdbc, javaEbean,
