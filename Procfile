@@ -1,1 +1,1 @@
-web: target/universal/stage/bin/{xstore} -Dhttp.port=$PORT
+web: target/universal/stage/bin/xstore -Dhttp.port=$PORT
