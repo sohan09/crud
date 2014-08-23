@@ -13,19 +13,19 @@ create table product (
   constraint pk_product primary key (id))
 ;
 
-create table user (
+create table p_user (
   id                        bigint not null,
   first_name                varchar(50),
   last_name                 varchar(50),
   email                     varchar(100),
   created_date              timestamp,
   last_modified_date        timestamp,
-  constraint pk_user primary key (id))
+  constraint pk_p_user primary key (id))
 ;
 
 create sequence product_seq;
 
-create sequence user_seq;
+create sequence p_user_seq;
 
 
 
@@ -34,9 +34,9 @@ create sequence user_seq;
 
 drop table if exists product cascade;
 
-drop table if exists user cascade;
+drop table if exists p_user cascade;
 
 drop sequence if exists product_seq;
 
-drop sequence if exists user_seq;
+drop sequence if exists p_user_seq;
 
