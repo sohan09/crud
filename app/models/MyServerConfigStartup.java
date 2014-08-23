@@ -12,28 +12,6 @@ public class MyServerConfigStartup implements ServerConfigStartup {
 	
         serverConfig.setDatabaseSequenceBatchSize(1);
 		
-		URI dbUri;
-		
-		try {
-			
-			dbUri = new URI(System.getenv("DATABASE_URL"));
-			
-		} catch (URISyntaxException ex) {
-		
-			return;
-		}
-		
-		String username = dbUri.getUserInfo().split(":")[0];
-		String password = dbUri.getUserInfo().split(":")[1];
-		String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath();
-		
-		DataSourceConfig dataSourceConfig = new DataSourceConfig();
-		
-		dataSourceConfig.setUrl(dbUrl);
-		dataSourceConfig.setPassword(password);
-		dataSourceConfig.setUsername(username);
-		
-		serverConfig.setDataSourceConfig(dataSourceConfig);
     }
 	
 }
