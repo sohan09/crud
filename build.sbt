@@ -4,8 +4,6 @@ version := "1.0.0"
 
 libraryDependencies ++= Seq(
   javaCore, javaJdbc, javaEbean,
-  "postgresql" % "postgresql" % "9.1-901.jdbc4",
-  "mysql" % "mysql-connector-java" % "5.1.32",
   "play2-crud" % "play2-crud_2.10" % "0.7.3-SNAPSHOT"
 )
 
