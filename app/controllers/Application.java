@@ -49,39 +49,52 @@ public class Application extends Controller {
 	
 	public static Result authenticate() {
 	
-		boolean scs = new Auth0ServletCallback().doGet();
+		try {
 		
-		if(scs) {
-		
-			Auth0Principal ap = new Auth0Principal(session("idToken"));
-
-			String[] tt = ap.getName().split(" ", 2);
+			boolean scs = new Auth0ServletCallback().doGet();
 			
-			String email = ap.getMail();
-			String fName = tt[0];
-			String lName = tt[1];
-		
-			User user = null;
-		
-			try {
+			if(scs) {
 			
+				Auth0Principal ap = new Auth0Principal(session("idToken"));
+				
+				String email = ap.getMail();
+				String fName = "";
+				String lName = "";
+				
+				try {
+					String[] tt = ap.getName().split(" ", 2);
+					fName = tt[0];
+					lName = tt[1];	
+				} catch(Exception ex) {
+					
+				}
+			
+				User user = null;
+			
+				try {
+				
+					user = retrieveUser(email);
+				} catch (IndexOutOfBoundsException ex) {
+				
+					user = new User(fName, lName, email);
+					Ebean.save(user);
+				}
+				
 				user = retrieveUser(email);
-			} catch (IndexOutOfBoundsException ex) {
+				
+				session("user.name", user.getFirstName() + " " + user.getLastName());
+				session("user.id", user.getId() + "");
 			
-				user = new User(fName, lName, email);
-				Ebean.save(user);
-			}
+				return redirect("/product/list");
+				
+			} else {
 			
-			user = retrieveUser(email);
-			
-			session("user.name", user.getFirstName() + " " + user.getLastName());
-			session("user.id", user.getId() + "");
+				return redirect("/");
+			}	
 		
-			return redirect("/product/list");
-			
-		} else {
+		} catch (Exception ex) {
 		
-			return redirect("/");
+			return redirect("/" + "?msg=" + ex + "[" + ex.getMessage() + "]");
 		}
 		
 	}

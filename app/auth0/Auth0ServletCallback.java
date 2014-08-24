@@ -56,16 +56,6 @@ public class Auth0ServletCallback {
         session("accessToken", tokens.getAccessToken());
         session("idToken", tokens.getIdToken());
     }
-
-    protected void onSuccess() {
-        // Redirect user to home
-        
-    }
-
-    protected void onFail() {
-        // Redirect user to home
-        
-    }
 	
     private URI getURI(Properties properties) {
         URI https;
@@ -145,11 +135,9 @@ public class Auth0ServletCallback {
 			
 				Tokens tokens = fetchTokens();
 				saveTokens(tokens);
-				onSuccess();
 				return true;
 			}
 			
-			onFail();
 			return false;
 		
 		} catch(IOException ex) {
@@ -187,6 +175,7 @@ public class Auth0ServletCallback {
     }
 
     private Tokens fetchTokens() throws IOException {
+	
         // Parse request to fetch authorization code
         String authorizationCode = getAuthorizationCode();
 
@@ -199,7 +188,7 @@ public class Auth0ServletCallback {
         nameValuePairs.add(new BasicNameValuePair("client_id",      (String) properties.get("auth0.client_id")));
         nameValuePairs.add(new BasicNameValuePair("client_secret",  (String) properties.get("auth0.client_secret")));
 
-        nameValuePairs.add(new BasicNameValuePair("redirect_uri",   request().uri().toString()));
+        nameValuePairs.add(new BasicNameValuePair("redirect_uri",   request().uri() + ""));
         nameValuePairs.add(new BasicNameValuePair("code",           authorizationCode));
 
         nameValuePairs.add(new BasicNameValuePair("grant_type",     "authorization_code"));
@@ -223,7 +212,7 @@ public class Auth0ServletCallback {
 
     private boolean isValidRequest() {
         if (hasError() || !isValidState()) {
-            onFail();
+
             return false;
         }
         return true;
