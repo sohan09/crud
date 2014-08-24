@@ -4,6 +4,7 @@ import java.util.*;
 
 import play.mvc.Controller;
 import play.mvc.Result;
+import play.mvc.With;
 import play.data.Form;
 import play.data.DynamicForm;
 import play.db.ebean.Model.Finder;
@@ -11,10 +12,13 @@ import play.db.ebean.Model.Finder;
 import com.avaje.ebean.Ebean;
 
 import models.*;
+import auth0.*;
 
 public class ProductController extends Controller {
 
 	public static Result create() {
+	
+		authorize();
 	
 		Product prod = bindProduct();
 		
@@ -32,6 +36,8 @@ public class ProductController extends Controller {
 
 	public static Result delete(Long id) {
 	
+		authorize();
+
 		Product prod = retrieveProduct(id);
 
 		Ebean.delete(prod);
@@ -39,6 +45,13 @@ public class ProductController extends Controller {
 		flash("msg", "Product " + id + "deleted Successfully.");
 		
 		return redirect("/product/list");	
+	}
+	
+	public static void authorize() {
+		if( new Auth0Filter().authorize() ) {
+			return;
+		}
+		redirect("/");
 	}
 	
 	public static Product retrieveProduct(long id) {
@@ -70,6 +83,8 @@ public class ProductController extends Controller {
 	}
 	
 	public static Result update(Long id) {
+	
+		authorize();
 
 		Product prod = retrieveProduct(id);
 		
@@ -85,6 +100,8 @@ public class ProductController extends Controller {
 	}
 	
 	public static Result list() {
+	
+		authorize();
 
 		long page = requestLong("page");
 		long size = requestLong("size");
@@ -106,7 +123,7 @@ public class ProductController extends Controller {
 		return ok(views.html.Product.list.render(prods, u_name));
 	}
 	
-	public static long requestLong(String key) {
+	static long requestLong(String key) {
 	
 		try {
 		
@@ -125,7 +142,7 @@ public class ProductController extends Controller {
 		
 	}
 	
-	public static long parseLong(String key) {
+	static long parseLong(String key) {
 	
 		try {
 		
@@ -146,6 +163,8 @@ public class ProductController extends Controller {
 	
 	public static Result show(Long id) {
 	
+		authorize();
+	
 		Product prod = retrieveProduct(id);
 		
 		String u_name = session("user.name");
@@ -154,6 +173,8 @@ public class ProductController extends Controller {
 	}
 	
 	public static Result edit(Long id) {
+	
+		authorize();
 
 		Product prod = retrieveProduct(id);
 		
@@ -163,6 +184,8 @@ public class ProductController extends Controller {
 	}
 	
 	public static Result crt() {
+	
+		authorize();
 	
 		String u_name = session("user.name");
 	

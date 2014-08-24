@@ -2,37 +2,33 @@ package controllers;
 
 import play.mvc.Controller;
 import play.mvc.Result;
-
+import play.data.DynamicForm;
+import play.data.Form;
+import play.Play;
 import com.avaje.ebean.Ebean;
-
 import models.*;
+import auth0.*;
+
 
 public class Application extends Controller {
 
 	public static Result login() {		//Login page
-
-		String email = "sohan09014@gmail.com";
-		String fName = "Sohan";
-		String lName = "Nohemy";
 	
-		User user = null;
+		String clientId = Play.application().configuration().getConfig("auth0").getString("client_id");
+		
+		String domain = Play.application().configuration().getConfig("auth0").getString("domain");
+		
+		String callbackUrl = Play.application().configuration().getConfig("auth0").getString("callback_url");
 	
-		try {
+		String state = new NonceGenerator().generateNonce();
 		
-			user = retrieveUser(email);
-		} catch (IndexOutOfBoundsException ex) {
+		DynamicForm requestData = Form.form().bindFromRequest();
 		
-			user = new User(fName, lName, email);
-			Ebean.save(user);
-		}
+		String error = requestData.get("error"); 
 		
-		user = retrieveUser(email);
-		
-		session("user.name", user.getFirstName() + " " + user.getLastName());
-		session("user.id", user.getId() + "");
-
-		return ok(views.html.Application.login.render());
-		//return ok(Long.parseLong(session("user.id")) + "");
+		session("state", state);
+	
+		return ok(views.html.Application.login.render(clientId, callbackUrl, domain, state, error));
 	}
 	
 	public static User retrieveUser(String email) {
@@ -53,7 +49,41 @@ public class Application extends Controller {
 	
 	public static Result authenticate() {
 	
-		return redirect("/product/list");
+		boolean scs = new Auth0ServletCallback().doGet();
+		
+		if(scs) {
+		
+			Auth0Principal ap = new Auth0Principal(session("idToken"));
+
+			String[] tt = ap.getName().split(" ", 2);
+			
+			String email = ap.getMail();
+			String fName = tt[0];
+			String lName = tt[1];
+		
+			User user = null;
+		
+			try {
+			
+				user = retrieveUser(email);
+			} catch (IndexOutOfBoundsException ex) {
+			
+				user = new User(fName, lName, email);
+				Ebean.save(user);
+			}
+			
+			user = retrieveUser(email);
+			
+			session("user.name", user.getFirstName() + " " + user.getLastName());
+			session("user.id", user.getId() + "");
+		
+			return redirect("/product/list");
+			
+		} else {
+		
+			return redirect("/");
+		}
+		
 	}
 	
 }

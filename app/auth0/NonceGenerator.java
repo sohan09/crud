@@ -17,6 +17,7 @@ public class NonceGenerator {
      * requests.
      * The nonce generation is a simplified version of ManagerBase.generateSessionId().
      */
+	 
     public String generateNonce() {
         byte random[] = new byte[16];
 

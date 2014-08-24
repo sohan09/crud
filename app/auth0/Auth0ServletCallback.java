@@ -32,11 +32,13 @@ import static java.util.Arrays.asList;
 public class Auth0ServletCallback {
 
     private Properties properties = new Properties();
-    private String redirectOnSuccess;
-    private String redirectOnFail;
 	
 	//Work Vars
 	private DynamicForm req = null;
+	
+	public Auth0ServletCallback() {
+		init();
+	}
 
     private Tokens parseTokens(String body) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
@@ -48,19 +50,19 @@ public class Auth0ServletCallback {
         return new Tokens(idToken, accessToken);
     }
 
-    protected void saveTokens(Tokens tokens) throws IOException {
+    protected void saveTokens(Tokens tokens) {
 
         // Save tokens on a persistent session
         session("accessToken", tokens.getAccessToken());
         session("idToken", tokens.getIdToken());
     }
 
-    protected void onSuccess() throws IOException {
+    protected void onSuccess() {
         // Redirect user to home
         
     }
 
-    protected void onFail() throws IOException {
+    protected void onFail() {
         // Redirect user to home
         
     }
@@ -109,18 +111,15 @@ public class Auth0ServletCallback {
 	
 		req = Form.form().bindFromRequest();
 
-        redirectOnSuccess = Play.application().configuration().getConfig("auth0").getString("auth0.redirect_on_success");
-
-        redirectOnFail = Play.application().configuration().getConfig("auth0").getString("auth0.redirect_on_error");
-
 		List<String> list = asList(new String[]{ 
-			"auth0.client_id", 
-				"auth0.client_secret", 
-					"auth0.domain" });
+			Play.application().configuration().getConfig("auth0").getString("client_id"), 
+				Play.application().configuration().getConfig("auth0").getString("client_secret"),
+					Play.application().configuration().getConfig("auth0").getString("domain") });
 					
 		int i = 0;
         for(String param : asList("auth0.client_id", "auth0.client_secret", "auth0.domain")) {
-            properties.put(param, list.get(0));
+            properties.put(param, list.get(i));
+			i++;
         }
     }
 
@@ -138,12 +137,25 @@ public class Auth0ServletCallback {
         return new RequestNonceStorage();
     }
 
-    protected void doGet() throws IOException {
-        if(isValidRequest()) {
-            Tokens tokens = fetchTokens();
-            saveTokens(tokens);
-            onSuccess();
-        }
+    public boolean doGet() {
+		
+		try {
+		
+			if(isValidRequest()) {
+			
+				Tokens tokens = fetchTokens();
+				saveTokens(tokens);
+				onSuccess();
+				return true;
+			}
+			
+			onFail();
+			return false;
+		
+		} catch(IOException ex) {
+			return false;
+		} 
+		
     }
 
     /**
@@ -209,7 +221,7 @@ public class Auth0ServletCallback {
         return parseTokens(tokensToParse);
     }
 
-    private boolean isValidRequest() throws IOException {
+    private boolean isValidRequest() {
         if (hasError() || !isValidState()) {
             onFail();
             return false;
