@@ -18,7 +18,10 @@ public class ProductController extends Controller {
 
 	public static Result create() {
 	
-		authorize();
+		if( ! authorize() ) {
+		
+			return redirect("/"); 
+		}
 	
 		Product prod = bindProduct();
 		
@@ -36,7 +39,10 @@ public class ProductController extends Controller {
 
 	public static Result delete(Long id) {
 	
-		authorize();
+		if( ! authorize() ) {
+		
+			return redirect("/"); 
+		}
 
 		Product prod = retrieveProduct(id);
 
@@ -47,11 +53,8 @@ public class ProductController extends Controller {
 		return redirect("/product/list");	
 	}
 	
-	public static void authorize() {
-		if( new Auth0Filter().authorize() ) {
-			return;
-		}
-		redirect("/");
+	public static boolean authorize() {
+		return new Auth0Filter().authorize();
 	}
 	
 	public static Product retrieveProduct(long id) {
@@ -84,7 +87,10 @@ public class ProductController extends Controller {
 	
 	public static Result update(Long id) {
 	
-		authorize();
+		if( ! authorize() ) {
+		
+			return redirect("/"); 
+		}
 
 		Product prod = retrieveProduct(id);
 		
@@ -101,7 +107,10 @@ public class ProductController extends Controller {
 	
 	public static Result list() {
 	
-		authorize();
+		if( ! authorize() ) {
+		
+			return redirect("/"); 
+		}
 
 		long page = requestLong("page");
 		long size = requestLong("size");
@@ -163,7 +172,10 @@ public class ProductController extends Controller {
 	
 	public static Result show(Long id) {
 	
-		authorize();
+		if( ! authorize() ) {
+		
+			return redirect("/"); 
+		}
 	
 		Product prod = retrieveProduct(id);
 		
@@ -174,7 +186,10 @@ public class ProductController extends Controller {
 	
 	public static Result edit(Long id) {
 	
-		authorize();
+		if( ! authorize() ) {
+		
+			return redirect("/"); 
+		}
 
 		Product prod = retrieveProduct(id);
 		
@@ -185,7 +200,10 @@ public class ProductController extends Controller {
 	
 	public static Result crt() {
 	
-		authorize();
+		if( ! authorize() ) {
+		
+			return redirect("/"); 
+		}
 	
 		String u_name = session("user.name");
 	
