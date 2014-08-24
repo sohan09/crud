@@ -4,7 +4,6 @@ version := "1.0.0"
 
 libraryDependencies ++= Seq(
   javaCore, javaJdbc, javaEbean, cache,
-  "postgresql" % "postgresql" % "9.1-901.jdbc4",
   "mysql" % "mysql-connector-java" % "5.1.32",
   "org.apache.httpcomponents" % "httpclient" % "4.3.2",
   "com.fasterxml.jackson.core" % "jackson-databind" % "2.0.0",
