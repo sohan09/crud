@@ -27,7 +27,7 @@ public class ProductController extends Controller {
 		
 		flash("msg", "The item has been created successfully.");
 
-		return redirect("/product/list" + "?" + prod.getUserId() + "=" + session("user.id") + "&" + parseLong(session("user.id")));
+		return redirect("/product/list");
 	}
 
 	public static Result delete(Long id) {
