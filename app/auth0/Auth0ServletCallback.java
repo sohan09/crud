@@ -23,7 +23,7 @@ import java.util.Properties;
 
 import play.mvc.*;
 import play.data.*;
-import play.api.Play;
+import play.Play;
 
 
 import static play.mvc.Controller.*;
@@ -109,9 +109,9 @@ public class Auth0ServletCallback {
 	
 		req = Form.form().bindFromRequest();
 
-        redirectOnSuccess = Play.current.configuration.getString("auth0.redirect_on_success");
+        redirectOnSuccess = Play.application().configuration().getConfig("auth0").getString("auth0.redirect_on_success");
 
-        redirectOnFail = Play.current.configuration.getString("auth0.redirect_on_error");
+        redirectOnFail = Play.application().configuration().getConfig("auth0").getString("auth0.redirect_on_error");
 
 		List<String> list = asList(new String[]{ 
 			"auth0.client_id", 
@@ -187,7 +187,7 @@ public class Auth0ServletCallback {
         nameValuePairs.add(new BasicNameValuePair("client_id",      (String) properties.get("auth0.client_id")));
         nameValuePairs.add(new BasicNameValuePair("client_secret",  (String) properties.get("auth0.client_secret")));
 
-        nameValuePairs.add(new BasicNameValuePair("redirect_uri",   req.uri().toString()));
+        nameValuePairs.add(new BasicNameValuePair("redirect_uri",   request().uri().toString()));
         nameValuePairs.add(new BasicNameValuePair("code",           authorizationCode));
 
         nameValuePairs.add(new BasicNameValuePair("grant_type",     "authorization_code"));
@@ -221,7 +221,7 @@ public class Auth0ServletCallback {
         return req.get("state").equals(getNonceStorage().getState());
     }
 
-    private static boolean hasError() {
+    private boolean hasError() {
         return req.get("error") != null;
     }
 

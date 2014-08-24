@@ -4,16 +4,15 @@ import java.io.IOException;
 
 import play.mvc.*;
 import play.data.*;
-import play.api.Play;
+import play.Play;
 import static play.mvc.Controller.*;
 
 public class Auth0Filter {
 
     private String onFailRedirectTo;
 
-    @Override
     public void init() {
-        onFailRedirectTo = Play.current.configuration.getString("auth0.redirect_on_error");
+        onFailRedirectTo = Play.application().configuration().getConfig("auth0").getString("redirect_on_authentication_error");
 
         if (onFailRedirectTo == null) {
             throw new IllegalArgumentException("auth0.redirect_on_authentication_error parameter of " + this.getClass().getName() + " cannot be null");

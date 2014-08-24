@@ -1,5 +1,7 @@
 package auth0;
 
+import java.security.Principal;
+
 import play.mvc.*;
 import play.data.*;
 import static play.mvc.Controller.*;
