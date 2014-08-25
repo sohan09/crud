@@ -76,10 +76,5 @@ public class Global extends GlobalSettings {
     public void onStop(Application app) {
         Logger.info("Application shutdown...");
     } */
-	
-    public Action onRequest(Request request, Method actionMethod) {
-        System.out.println("before each request..." + request.toString());
-        return super.onRequest(request, actionMethod);
-    }
 
 }
