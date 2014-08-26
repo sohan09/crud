@@ -2,7 +2,7 @@
 
 @main(title = "Home")(user_name = "") {
 
-	<script src="https://cdn.auth0.com/w2/auth0-widget-2.4.0.min.js"></script>
+	<script src="https://cdn.auth0.com/w2/auth0-widget-5.js"></script>
 
     <script type="text/javascript">
 
@@ -35,7 +35,7 @@
 					
 						<p class="text-center">
 						
-							<button onclick="widget.signin({state: '@state'})" class="btn btn-default btn-lg">Login</button>
+							<button onclick="widget.signin({scope: 'openid profile', state: '@state'})" class="btn btn-default btn-lg">Login</button>
 						
 						</p>
 					
