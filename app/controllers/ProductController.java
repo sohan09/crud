@@ -9,6 +9,10 @@ import play.data.Form;
 import play.data.DynamicForm;
 import play.db.ebean.Model.Finder;
 
+import play.libs.Json;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import com.avaje.ebean.Ebean;
 
 import models.*;
@@ -16,198 +20,239 @@ import auth0.*;
 
 public class ProductController extends Controller {
 
-	public static Result create() {
-	
-		if( ! authorize() ) {
-		
-			return redirect("/"); 
-		}
-	
-		Product prod = bindProduct();
-		
-		prod.setUserId(parseLong(session("user.id")));
-		
-		prod.setCreatedDate(new Date());
-		prod.setLastModifiedDate(prod.getCreatedDate());
-		
-		Ebean.save(prod);
-		
-		flash("msg", "The item has been created successfully.");
+    private static Map<String, Object> profile;
 
-		return redirect("/product/list");
-	}
+    public static Result create() {
 
-	public static Result delete(Long id) {
-	
-		if( ! authorize() ) {
-		
-			return redirect("/"); 
-		}
+        if (!authorize()) {
 
-		Product prod = retrieveProduct(id);
+            ObjectNode result = Json.newObject();
+            result.put("code", "unauthorized");
+            result.put("msg", "Unauthorized");
+            return ok(result);
+        }
 
-		Ebean.delete(prod);
+        Product prod = bindProduct();
 
-		flash("msg", "Product " + id + "deleted Successfully.");
-		
-		return redirect("/product/list");	
-	}
-	
-	public static boolean authorize() {
-		return new Auth0Filter().authorize();
-	}
-	
-	public static Product retrieveProduct(long id) {
-	
-		Product prod = Ebean.find(Product.class)
-		.where()
-		.eq("id", id)
-		.eq("userId", parseLong(session("user.id")))
-		.findList()
-		.get(0);
-		
-		return prod;
-	}
+        prod.setUserId(parseLong(session("user.id")));
 
-	private static Product bindProduct() {
-		Product prod = new Product();		
-		return bindProduct(prod);
-	}
-	
-	private static Product bindProduct(Product prod) {
-	
-		DynamicForm requestData = Form.form().bindFromRequest();
-		String name = requestData.get("name");
-		String description = requestData.get("description");
-		
-		prod.setName(name);
-		prod.setDescription(description);
-		return prod;
-	}
-	
-	public static Result update(Long id) {
-	
-		if( ! authorize() ) {
-		
-			return redirect("/"); 
-		}
+        prod.setCreatedDate(new Date());
+        prod.setLastModifiedDate(prod.getCreatedDate());
 
-		Product prod = retrieveProduct(id);
-		
-		bindProduct(prod);
-		
-		prod.setLastModifiedDate(new Date());
-		
-		Ebean.update(prod);
-		
-		flash("msg", "Product " + id + "updated Successfully.");
-		
-		return redirect("/product/list");
-	}
-	
-	public static Result list() {
-	
-		if( ! authorize() ) {
-		
-			return redirect("/"); 
-		}
+        Ebean.save(prod);
 
-		long page = requestLong("page");
-		long size = requestLong("size");
-		
-		size = Math.min(size, 50l);
-		size = size <= 0l ? 20l : size;
-		
-		long offset = ( page - 1l ) * size;
-			
-		List<Product> prods = Ebean.find(Product.class)
-			.where()
-			.eq("userId", parseLong(session("user.id")))
-			.setFirstRow((int) offset)
-			.setMaxRows((int) size)
-			.findList();
-			
-		String u_name = session("user.name");
-	
-		return ok(views.html.Product.list.render(prods, u_name));
-	}
-	
-	static long requestLong(String key) {
-	
+        ObjectNode result = Json.newObject();
+        result.put("code", "success");
+        result.put("msg", "Successfully Created " + prod);
+        return ok(result);
+    }
+
+    public static Result delete(Long id) {
+
+        if (!authorize()) {
+
+            ObjectNode result = Json.newObject();
+            result.put("code", "unauthorized");
+            result.put("msg", "Unauthorized");
+            return ok(result);
+        }
+
+        Product prod = retrieveProduct(id);
+
+        Ebean.delete(prod);
+
+        ObjectNode result = Json.newObject();
+        result.put("code", "success");
+        result.put("msg", "");
+        return ok(result);
+    }
+
+    public static boolean authorize() {
+
 		try {
 		
-			DynamicForm requestData = Form.form().bindFromRequest();
-			
-			long l = Long.parseLong(requestData.get(key));
-			
-		//	System.out.println("###[[parse : " + l + " => " + session("user.id"));
-			
-			return l;
-			
-		} catch(NullPointerException | NumberFormatException ex) {
-		
-			return 0;
-		}
-		
-	}
-	
-	static long parseLong(String key) {
-	
-		try {
-		
-			DynamicForm requestData = Form.form().bindFromRequest();
-			
-			long l = Long.parseLong(key);
-			
-		//	System.out.println("###[[parse : " + l + " => " + session("user.id"));
-			
-			return l;
-			
-		} catch(NullPointerException | NumberFormatException ex) {
-		
-			return 0;
-		}
-		
-	}
-	
-	public static Result show(Long id) {
-	
-		if( ! authorize() ) {
-		
-			return redirect("/"); 
-		}
-	
-		Product prod = retrieveProduct(id);
-		
-		String u_name = session("user.name");
-		
-		return ok(views.html.Product.show.render(prod, u_name));
-	}
-	
-	public static Result edit(Long id) {
-	
-		if( ! authorize() ) {
-		
-			return redirect("/"); 
-		}
+            JWTFilter jf = new JWTFilter();
+            jf.doFilter();
+            profile = jf.getProfile();
 
-		Product prod = retrieveProduct(id);
-		
-		String u_name = session("user.name");
-		
-		return ok(views.html.Product.edit.render( prod, u_name));
-	}
-	
-	public static Result crt() {
-	
-		if( ! authorize() ) {
-		
-			return redirect("/"); 
-		}
-	
-		String u_name = session("user.name");
-	
-		return ok(views.html.Product.create.render(u_name));
-	}
-	
+            String email = (String) profile.get("email");;
+            String name = (String) profile.get("name");
+
+            String fName = "";
+            String lName = "";
+
+            try {
+                String[] tt = name.split(" ", 2);
+                fName = tt[0];
+                lName = tt[1];
+            } catch (Exception ex) {
+
+            }
+
+            User user = null;
+
+            try {
+
+                user = retrieveUser(email);
+            } catch (IndexOutOfBoundsException ex) {
+
+                user = new User(fName, lName, email);
+                Ebean.save(user);
+            }
+
+            user = retrieveUser(email);
+
+            session("user.name", user.getFirstName() + " " + user.getLastName());
+            session("user.id", user.getId() + "");
+
+            return true;
+        } catch (Exception ex) {
+            return false;
+        } 
+    }
+
+    public static User retrieveUser(String email) {
+
+        return Ebean.find(User.class)
+                .where()
+                .eq("email", email)
+                .findList()
+                .get(0);
+    }
+
+    public static Product retrieveProduct(long id) {
+
+        Product prod = Ebean.find(Product.class)
+                .where()
+                .eq("id", id)
+                .eq("userId", parseLong(session("user.id")))
+                .findList()
+                .get(0);
+
+        return prod;
+    }
+
+    private static Product bindProduct() {
+        Product prod = new Product();
+        return bindProduct(prod);
+    }
+
+    private static Product bindProduct(Product prod) {
+
+        DynamicForm requestData = Form.form().bindFromRequest();
+        String name = requestData.get("name");
+        String description = requestData.get("description");
+
+        prod.setName(name);
+        prod.setDescription(description);
+        return prod;
+    }
+
+    public static Result update(Long id) {
+
+        if (!authorize()) {
+
+            ObjectNode result = Json.newObject();
+            result.put("code", "unauthorized");
+            result.put("msg", "Unauthorized");
+            return ok(result);
+        }
+
+        Product prod = retrieveProduct(id);
+
+        bindProduct(prod);
+
+        prod.setLastModifiedDate(new Date());
+
+        Ebean.update(prod);
+
+        ObjectNode result = Json.newObject();
+        result.put("code", "success");
+        result.put("msg", "");
+        return ok(result);
+    }
+
+    public static Result list() {
+
+        if (!authorize()) {
+
+            ObjectNode result = Json.newObject();
+            result.put("code", "unauthorized");
+            result.put("msg", "Unauthorized");
+            return ok(result);
+        }
+
+        long page = requestLong("page");
+        long size = requestLong("size");
+
+        size = Math.min(size, 50l);
+        size = size <= 0l ? 20l : size;
+
+        long offset = (page - 1l) * size;
+
+        List<Product> prods = Ebean.find(Product.class)
+                .where()
+                .eq("userId", parseLong(session("user.id")))
+                .setFirstRow((int) offset)
+                .setMaxRows((int) size)
+                .findList();
+
+        String u_name = session("user.name");
+
+        return ok(Json.toJson(prods));
+    }
+
+    static long requestLong(String key) {
+
+        try {
+
+            DynamicForm requestData = Form.form().bindFromRequest();
+
+            long l = Long.parseLong(requestData.get(key));
+
+            //	System.out.println("###[[parse : " + l + " => " + session("user.id"));
+            return l;
+
+        } catch (NullPointerException | NumberFormatException ex) {
+
+            return 0;
+        }
+
+    }
+
+    static long parseLong(String key) {
+
+        try {
+
+            DynamicForm requestData = Form.form().bindFromRequest();
+
+            long l = Long.parseLong(key);
+
+            //	System.out.println("###[[parse : " + l + " => " + session("user.id"));
+            return l;
+
+        } catch (NullPointerException | NumberFormatException ex) {
+
+            return 0;
+        }
+
+    }
+
+    public static Result show(Long id) {
+
+        if (!authorize()) {
+
+            ObjectNode result = Json.newObject();
+            result.put("code", "unauthorized");
+            result.put("msg", "Unauthorized");
+            return ok(result);
+        }
+
+        Product prod = retrieveProduct(id);
+
+        String u_name = session("user.name");
+
+        return ok(Json.toJson(prod));
+    }
+
 }

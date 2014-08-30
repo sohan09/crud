@@ -1,6 +1,7 @@
 var app = angular.module( 'xstore', [
   'auth0',
-  'ngRoute'
+  'ngRoute',
+  'ngResource'
 ]);
 
 
@@ -11,28 +12,28 @@ app.config( function myAppConfig ( $routeProvider, authProvider, $httpProvider, 
       controller: 'ProductListCtrl',
       templateUrl: 'Product/list.scala.html',
       pageTitle: 'All Products',
-      requiresLogin: true
+    //  requiresLogin: true
     })
 
     .when( '/product/crt/', {
       controller: 'ProductCreateCtrl',
       templateUrl: 'Product/create.scala.html',
       pageTitle: 'Create Product',
-      requiresLogin: true
+    //  requiresLogin: true
     })
 
     .when( '/product/show/:id', {
       controller: 'ProductShowCtrl',
       templateUrl: 'Product/show.scala.html',
       pageTitle: 'Product Details',
-      requiresLogin: true
+    //  requiresLogin: true
     })
 	
     .when( '/product/list', {
       controller: 'ProductListCtrl',
       templateUrl: 'Product/list.scala.html',
       pageTitle: 'Product Details',
-      requiresLogin: true
+    //  requiresLogin: true
     })
 	
     .when( '/login', {
@@ -77,14 +78,14 @@ app.controller( 'AppCtrl', ['$scope', '$location', function ( $scope, $location 
 
 
 app.controller( 'RtCtrl', [ '$scope', '$location', 'auth', function ( $scope, $location, auth ) {
-
-	$scope.user_name = "Sohan Nohemy";
+	
+	$scope.user_name = null;
 	
 	$scope.login = function () {
 		console.log("login");
 		auth.signin({
 		  // popup: true to use popup instead of redirect
-		});
+		});		
 	}
 	
 	$scope.logout = function () {
@@ -96,27 +97,42 @@ app.controller( 'RtCtrl', [ '$scope', '$location', 'auth', function ( $scope, $l
 }]);
 
 
-app.controller( 'ProductListCtrl', [ '$scope', '$location', function ( $scope, $location ) {
+app.controller( 'ProductListCtrl', [ '$scope', '$location', '$resource', function ( $scope, $location, $resource ) {
 
-	$scope.products = [
-		{id: 2, name: "product Name", description: "Description"},
-	];
+    var rr = $resource('/product/list', {}, {
+      list: {method:'GET', params:{}, isArray:true}
+    });
+
+	$scope.products = rr.list();
 	
-	for(var i = 1; i <= 10; i++) {
-		$scope.products[i - 1] = {id: i, name: "product Name", description: "Description"};
+	$scope.user_name = (auth.profile === null) ? "" : auth.profile.name;	
+}]);
+
+
+app.controller( 'ProductCreateCtrl', [ '$scope', '$location', '$resource', function ( $scope, $location, $resource ) {
+
+	$scope.prod = {id: 0, name: "", description: ""};
+
+	$scope.create = function(prod) {
+		var rr = $resource('/product/create', {}, {
+		  create: {method:'POST', params:{name: $scope.prod.name, description: $scope.prod.description}, isArray:false}
+		});
+
+		rr.create();
+		
+		$scope.prod = {id: 0, name: "", description: ""};
 	}
-	
+
+	$scope.user_name = (auth.profile === null) ? "" : auth.profile.name;
 }]);
 
+app.controller( 'ProductShowCtrl', [ '$scope', '$location', '$resource', '$routeParams', function ( $scope, $location, $resource, $routeParams ) {
 
-app.controller( 'ProductCreateCtrl', [ '$scope', '$location', function ( $scope, $location ) {
+    var rr = $resource('/product/show/:id', {}, {
+      get: {method:'GET', params:{id: $routeParams.id}, isArray:false}
+    });
 
+	$scope.prod = rr.get();
 
-
-}]);
-
-app.controller( 'ProductShowCtrl', [ '$scope', '$location', function ( $scope, $location ) {
-
-
-
+	$scope.user_name = (auth.profile === null) ? "" : auth.profile.name;
 }]);

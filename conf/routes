@@ -2,13 +2,7 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-# Home page
-# Home page
-GET     /               		controllers.Application.login()
-GET     /logout               	controllers.Application.logout()
 
-GET		/product/crt			controllers.ProductController.crt()
-GET		/product/edit/:id		controllers.ProductController.edit(id: Long)
 GET		/product/show/:id		controllers.ProductController.show(id: Long)
 GET		/product/list			controllers.ProductController.list()
 GET		/product/delete/:id		controllers.ProductController.delete(id: Long)
@@ -16,7 +10,6 @@ GET		/product/delete/:id		controllers.ProductController.delete(id: Long)
 POST	/product/create				controllers.ProductController.create()
 POST	/product/update/:id			controllers.ProductController.update(id: Long)
 
-GET 	/authenticate				controllers.Application.authenticate()
 
 # public assets js, css, img
-GET  /public/*file               controllers.Assets.at(path="/public", file)
+GET  /web/*file               controllers.Assets.at(path="/public", file)
