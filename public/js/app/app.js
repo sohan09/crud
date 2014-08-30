@@ -45,7 +45,7 @@ app.config( function myAppConfig ( $routeProvider, authProvider, $httpProvider, 
   authProvider.init({
     domain: "boxed.auth0.com",
     clientID: "rectojRIfjERbByPK2AdO7EHf9ywZt3U",
-    callbackURL: "http://xposeb.herokuapp.com/authenticate",
+    callbackURL: location.href,
     loginUrl: '/login'
   });
 
