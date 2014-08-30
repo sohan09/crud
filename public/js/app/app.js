@@ -12,28 +12,28 @@ app.config( function myAppConfig ( $routeProvider, authProvider, $httpProvider, 
       controller: 'ProductListCtrl',
       templateUrl: 'Product/list.scala.html',
       pageTitle: 'All Products',
-    //  requiresLogin: true
+      requiresLogin: true
     })
 
     .when( '/product/crt/', {
       controller: 'ProductCreateCtrl',
       templateUrl: 'Product/create.scala.html',
       pageTitle: 'Create Product',
-    //  requiresLogin: true
+      requiresLogin: true
     })
 
     .when( '/product/show/:id', {
       controller: 'ProductShowCtrl',
       templateUrl: 'Product/show.scala.html',
       pageTitle: 'Product Details',
-    //  requiresLogin: true
+      requiresLogin: true
     })
 	
     .when( '/product/list', {
       controller: 'ProductListCtrl',
       templateUrl: 'Product/list.scala.html',
       pageTitle: 'Product Details',
-    //  requiresLogin: true
+      requiresLogin: true
     })
 	
     .when( '/login', {
