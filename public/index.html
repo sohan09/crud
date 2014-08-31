@@ -31,7 +31,7 @@
   <body data-target=".navbar" data-spy="scroll" ng-controller="RtCtrl">
   
 	
-	<nav ng-show="user_name" id="topnav" class="navbar navbar-default" role="navigation">
+	<nav ng-show="auth.profile.name" id="topnav" class="navbar navbar-default" role="navigation">
 	
 		<div class="container">
 		
@@ -47,7 +47,7 @@
 				
 				</button>
 				
-				<a class="navbar-brand" href="#">{{user_name}}</a>
+				<a class="navbar-brand" href="#">{{auth.profile.name}}</a>
 				
 			</div>
 			
@@ -141,9 +141,6 @@
 	
     <script type="text/javascript" src="//use.typekit.net/iws6ohy.js"></script>
     <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
-	
-	
-    <script type="text/javascript" src="js/app/auth0-variables.js"></script>
 	
 	
     <script type="text/javascript" src="https://cdn.auth0.com/w2/auth0-widget-5.js"></script>
