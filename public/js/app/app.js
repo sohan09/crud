@@ -79,7 +79,7 @@ app.controller( 'AppCtrl', ['$scope', '$location', function ( $scope, $location 
 
 app.controller( 'RtCtrl', [ '$scope', '$location', 'auth', function ( $scope, $location, auth ) {
 	
-	$scope.user_name = null;
+	$scope.auth = auth;
 	
 	$scope.login = function () {
 		console.log("login");
@@ -97,7 +97,7 @@ app.controller( 'RtCtrl', [ '$scope', '$location', 'auth', function ( $scope, $l
 }]);
 
 
-app.controller( 'ProductListCtrl', [ '$scope', '$location', '$resource', 'auth', function ( $scope, $location, $resource, auth ) {
+app.controller( 'ProductListCtrl', [ '$scope', '$location', '$resource', function ( $scope, $location, $resource ) {
 
     var rr = $resource('/product/list', {}, {
       list: {method:'GET', params:{}, isArray:true}
@@ -105,11 +105,11 @@ app.controller( 'ProductListCtrl', [ '$scope', '$location', '$resource', 'auth',
 
 	$scope.products = rr.list();
 	
-	$scope.user_name = (auth.profile === null) ? "" : auth.profile.name;	
+//	$scope.user_name = (auth.profile === null) ? "" : auth.profile.name;	
 }]);
 
 
-app.controller( 'ProductCreateCtrl', [ '$scope', '$location', '$resource', 'auth', function ( $scope, $location, $resource, auth ) {
+app.controller( 'ProductCreateCtrl', [ '$scope', '$location', '$resource', function ( $scope, $location, $resource ) {
 
 	$scope.prod = {id: 0, name: "", description: ""};
 
@@ -123,10 +123,10 @@ app.controller( 'ProductCreateCtrl', [ '$scope', '$location', '$resource', 'auth
 		$scope.prod = {id: 0, name: "", description: ""};
 	}
 
-	$scope.user_name = (auth.profile === null) ? "" : auth.profile.name;
+//	$scope.user_name = (auth.profile === null) ? "" : auth.profile.name;
 }]);
 
-app.controller( 'ProductShowCtrl', [ '$scope', '$location', '$resource', '$routeParams', 'auth', function ( $scope, $location, $resource, $routeParams, auth ) {
+app.controller( 'ProductShowCtrl', [ '$scope', '$location', '$resource', '$routeParams', function ( $scope, $location, $resource, $routeParams ) {
 
     var rr = $resource('/product/show/:id', {}, {
       get: {method:'GET', params:{id: $routeParams.id}, isArray:false}
@@ -134,5 +134,5 @@ app.controller( 'ProductShowCtrl', [ '$scope', '$location', '$resource', '$route
 
 	$scope.prod = rr.get();
 
-	$scope.user_name = (auth.profile === null) ? "" : auth.profile.name;
+//	$scope.user_name = (auth.profile === null) ? "" : auth.profile.name;
 }]);
