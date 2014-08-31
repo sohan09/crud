@@ -43,6 +43,10 @@ public class User implements Serializable {
     @Required
     @Column(length = 100)
     private String email;
+	
+    @Required
+    @Column(length = 200)
+    private String userId;
 
     @Required
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
@@ -55,17 +59,18 @@ public class User implements Serializable {
     public User() {
     }
 
-    public User(String firstName, String lastName, String email, Date createdDate, Date lastModifiedDate) {
+    public User(String firstName, String lastName, String email, String userId, Date createdDate, Date lastModifiedDate) {
 
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+		this.userId = userId;
         this.createdDate = createdDate;
         this.lastModifiedDate = lastModifiedDate;
     }
 
-    public User(String firstName, String lastName, String email) {
-        this(firstName, lastName, email, null, null);
+    public User(String firstName, String lastName, String email, String userId) {
+        this(firstName, lastName, email, userId, null, null);
     }
 
     public User(String firstName, String lastName) {
@@ -100,6 +105,26 @@ public class User implements Serializable {
     public void setLastName(String lastName) {
 
         this.lastName = lastName;
+    }
+	
+    public String getEmail() {
+
+        return email;
+    }
+
+    public void setEmail(String email) {
+
+        this.email = email;
+    }
+	
+    public String getUserId() {
+
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+
+        this.userId = userId;
     }
 
     @Override

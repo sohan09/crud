@@ -75,7 +75,8 @@ public class ProductController extends Controller {
             jf.doFilter();
             profile = jf.getProfile();
 
-            String email = (String) profile.get("email");;
+			String user_id = (String) profile.get("user_id");
+            String email = (String) profile.get("email");
             String name = (String) profile.get("name");
 
             String fName = "";
@@ -93,14 +94,14 @@ public class ProductController extends Controller {
 
             try {
 
-                user = retrieveUser(email);
+                user = retrieveUser(user_id);
             } catch (IndexOutOfBoundsException ex) {
 
-                user = new User(fName, lName, email);
+                user = new User(fName, lName, email, user_id);
                 Ebean.save(user);
             }
 
-            user = retrieveUser(email);
+            user = retrieveUser(user_id);
 
             session("user.name", user.getFirstName() + " " + user.getLastName());
             session("user.id", user.getId() + "");
@@ -111,11 +112,11 @@ public class ProductController extends Controller {
         } 
     }
 
-    public static User retrieveUser(String email) {
+    public static User retrieveUser(String user_id) {
 
         return Ebean.find(User.class)
                 .where()
-                .eq("email", email)
+                .eq("userId", user_id)
                 .findList()
                 .get(0);
     }
