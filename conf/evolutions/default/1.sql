@@ -18,6 +18,7 @@ create table p_user (
   first_name                varchar(50),
   last_name                 varchar(50),
   email                     varchar(100),
+  user_id                   varchar(200),
   created_date              timestamp,
   last_modified_date        timestamp,
   constraint pk_p_user primary key (id))
