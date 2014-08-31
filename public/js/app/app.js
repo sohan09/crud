@@ -97,7 +97,7 @@ app.controller( 'RtCtrl', [ '$scope', '$location', 'auth', function ( $scope, $l
 }]);
 
 
-app.controller( 'ProductListCtrl', [ '$scope', '$location', '$resource', function ( $scope, $location, $resource ) {
+app.controller( 'ProductListCtrl', [ '$scope', '$location', '$resource', 'auth', function ( $scope, $location, $resource, auth ) {
 
     var rr = $resource('/product/list', {}, {
       list: {method:'GET', params:{}, isArray:true}
@@ -109,7 +109,7 @@ app.controller( 'ProductListCtrl', [ '$scope', '$location', '$resource', functio
 }]);
 
 
-app.controller( 'ProductCreateCtrl', [ '$scope', '$location', '$resource', function ( $scope, $location, $resource ) {
+app.controller( 'ProductCreateCtrl', [ '$scope', '$location', '$resource', 'auth', function ( $scope, $location, $resource, auth ) {
 
 	$scope.prod = {id: 0, name: "", description: ""};
 
@@ -126,7 +126,7 @@ app.controller( 'ProductCreateCtrl', [ '$scope', '$location', '$resource', funct
 	$scope.user_name = (auth.profile === null) ? "" : auth.profile.name;
 }]);
 
-app.controller( 'ProductShowCtrl', [ '$scope', '$location', '$resource', '$routeParams', function ( $scope, $location, $resource, $routeParams ) {
+app.controller( 'ProductShowCtrl', [ '$scope', '$location', '$resource', '$routeParams', 'auth', function ( $scope, $location, $resource, $routeParams, auth ) {
 
     var rr = $resource('/product/show/:id', {}, {
       get: {method:'GET', params:{id: $routeParams.id}, isArray:false}
