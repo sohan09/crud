@@ -20,6 +20,8 @@ import auth0.*;
 
 public class ProductController extends Controller {
 
+	private static Exception error;
+
     private static Map<String, Object> profile;
 
     public static Result create() {
@@ -28,7 +30,7 @@ public class ProductController extends Controller {
 
             ObjectNode result = Json.newObject();
             result.put("code", "unauthorized");
-            result.put("msg", "Unauthorized");
+            result.put("msg", "" + error);
             return ok(result);
         }
 
@@ -53,7 +55,7 @@ public class ProductController extends Controller {
 
             ObjectNode result = Json.newObject();
             result.put("code", "unauthorized");
-            result.put("msg", "Unauthorized");
+            result.put("msg", "" + error);
             return ok(result);
         }
 
@@ -108,6 +110,7 @@ public class ProductController extends Controller {
 
             return true;
         } catch (Exception ex) {
+			error = ex;
             return false;
         } 
     }
@@ -155,7 +158,7 @@ public class ProductController extends Controller {
 
             ObjectNode result = Json.newObject();
             result.put("code", "unauthorized");
-            result.put("msg", "Unauthorized");
+            result.put("msg", "" + error);
             return ok(result);
         }
 
@@ -179,7 +182,7 @@ public class ProductController extends Controller {
 
             ObjectNode result = Json.newObject();
             result.put("code", "unauthorized");
-            result.put("msg", "Unauthorized");
+            result.put("msg", "" + error);
             return ok(result);
         }
 
@@ -245,7 +248,7 @@ public class ProductController extends Controller {
 
             ObjectNode result = Json.newObject();
             result.put("code", "unauthorized");
-            result.put("msg", "Unauthorized");
+            result.put("msg", "" + error);
             return ok(result);
         }
 
